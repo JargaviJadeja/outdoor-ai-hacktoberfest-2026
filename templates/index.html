@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Grounded — Touch Grass</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #173222;
+            background:
+                radial-gradient(circle at top left, #dff5df 0%, transparent 35%),
+                radial-gradient(circle at bottom right, #f7e8c8 0%, transparent 30%),
+                #f5f8f2;
+        }
+
+        .container {
+            width: min(1000px, 92%);
+            margin: auto;
+            padding: 45px 0;
+        }
+
+        /* HERO */
+
+        .hero {
+            text-align: center;
+            padding: 20px 10px 35px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 50px;
+            background: #e4f3e4;
+            color: #356844;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            font-size: clamp(45px, 8vw, 76px);
+            margin: 0;
+            letter-spacing: -3px;
+        }
+
+        .tagline {
+            margin: 14px auto 0;
+            max-width: 600px;
+            font-size: 19px;
+            line-height: 1.6;
+            color: #5b6f61;
+        }
+
+        /* MAIN CARD */
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid #e0e8df;
+            border-radius: 28px;
+            padding: 35px;
+            box-shadow: 0 20px 60px rgba(35, 65, 43, 0.10);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            margin-top: 0;
+            font-size: 25px;
+        }
+
+        .section-subtitle {
+            color: #718077;
+            margin-bottom: 28px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #d5dfd6;
+            border-radius: 12px;
+            background: #fbfdfb;
+            color: #20392a;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #65966f;
+            box-shadow: 0 0 0 3px rgba(101, 150, 111, 0.12);
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 16px;
+            border: none;
+            border-radius: 13px;
+            background: #315f3d;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        button:hover {
+            background: #244b30;
+            transform: translateY(-2px);
+        }
+
+        /* RESULT */
+
+        #loading {
+            margin-top: 25px;
+            text-align: center;
+            color: #5c7463;
+        }
+
+        .result-card {
+            margin-top: 25px;
+            background: #ffffff;
+            border: 1px solid #dce7dc;
+            border-radius: 25px;
+            padding: 32px;
+            box-shadow: 0 15px 45px rgba(35, 65, 43, 0.08);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .result-header h2 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .ai-badge {
+            padding: 7px 12px;
+            border-radius: 50px;
+            background: #f0e8d4;
+            color: #70582c;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        #result {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: #33483a;
+            font-size: 16px;
+        }
+
+        .new-mission {
+            background: #edf4ed;
+            color: #315f3d;
+            border: 1px solid #d6e4d7;
+        }
+
+        .new-mission:hover {
+            background: #e1eee2;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* INFO */
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .info-card {
+            background: #ffffff;
+            border: 1px solid #e1e9e1;
+            border-radius: 18px;
+            padding: 20px;
+        }
+
+        .info-card .icon {
+            font-size: 25px;
+        }
+
+        .info-card h3 {
+            margin: 12px 0 7px;
+            font-size: 16px;
+        }
+
+        .info-card p {
+            margin: 0;
+            color: #718077;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #839087;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+
+            .container {
+                padding: 25px 0;
+            }
+
+            .main-card,
+            .result-card {
+                padding: 22px;
+                border-radius: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="badge">
+            🌱 LOCAL AI • OPEN WEIGHT
+        </div>
+
+        <h1>🌿 Grounded</h1>
+
+        <p class="tagline">
+            Less scrolling. More noticing.<br>
+            Let AI help you get outside and touch grass.
+        </p>
+
+    </section>
+
+
+    <!-- INPUT -->
+
+    <section class="main-card">
+
+        <h2 class="section-title">
+            Plan your outdoor mission
+        </h2>
+
+        <p class="section-subtitle">
+            Tell Grounded a little about your moment. It will create a
+            small adventure designed around you.
+        </p>
+
+        <div class="form-grid">
+
+            <div class="field">
+
+                <label for="time">
+                    ⏱️ How much time do you have?
+                </label>
+
+                <select id="time">
+                    <option value="10 minutes">10 minutes</option>
+                    <option value="20 minutes">20 minutes</option>
+                    <option value="30 minutes">30 minutes</option>
+                    <option value="1 hour">1 hour</option>
+                    <option value="2 hours">2 hours</option>
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label for="mood">
+                    💭 How are you feeling?
+                </label>
+
+                <select id="mood">
+                    <option value="tired">Tired</option>
+                    <option value="stressed">Stressed</option>
+                    <option value="bored">Bored</option>
+                    <option value="curious">Curious</option>
+                    <option value="happy">Happy</option>
+                    <option value="restless">Restless</option>
+                </select>
+
+            </div>
+
+
+            <div class="field full">
+
+                <label for="place">
+                    📍 Where are you going?
+                </label>
+
+                <input
+                    id="place"
+                    type="text"
+                    placeholder="e.g. college campus, park, neighborhood"
+                >
+
+            </div>
+
+        </div>
+
+
+        <button onclick="generateMission()">
+            🌱 Create My Mission
+        </button>
+
+    </section>
+
+
+    <!-- LOADING -->
+
+    <div id="loading" class="result-card hidden">
+
+        <p style="text-align:center;">
+            🌿 Grounded is thinking...
+            <br>
+            <small>
+                Your mission is being created locally with Gemma.
+            </small>
+        </p>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <section id="resultCard" class="result-card hidden">
+
+        <div class="result-header">
+
+            <h2>
+                🌿 Your Mission
+            </h2>
+
+            <span class="ai-badge">
+                GEMMA • LOCAL AI
+            </span>
+
+        </div>
+
+        <div id="result"></div>
+
+        <button
+            class="new-mission"
+            onclick="generateMission()"
+        >
+            🔄 Create Another Mission
+        </button>
+
+    </section>
+
+
+    <!-- EXPLANATION -->
+
+    <section class="info-grid">
+
+        <div class="info-card">
+
+            <div class="icon">🤖</div>
+
+            <h3>Local AI</h3>
+
+            <p>
+                Missions are generated locally using the open-weight
+                Gemma model through Ollama.
+            </p>
+
+        </div>
+
+
+        <div class="info-card">
+
+            <div class="icon">📵</div>
+
+            <h3>Phone-Free</h3>
+
+            <p>
+                Every mission includes a small challenge designed
+                to help you step away from your screen.
+            </p>
+
+        </div>
+
+
+        <div class="info-card">
+
+            <div class="icon">🌎</div>
+
+            <h3>Touch Grass</h3>
+
+            <p>
+                Turn a few minutes outside into something intentional,
+                curious, and memorable.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <div class="footer">
+
+        Built with Flask · Ollama · Gemma 3 4B
+        <br>
+        An open-source AI experiment for Hacktoberfest 2026
+
+    </div>
+
+</div>
+
+
+<script>
+
+async function generateMission() {
+
+    const time = document.getElementById("time").value;
+    const place = document.getElementById("place").value;
+    const mood = document.getElementById("mood").value;
+
+    if (!place.trim()) {
+
+        alert(
+            "Tell Grounded where you're going first 🌿"
+        );
+
+        return;
+    }
+
+    document
+        .getElementById("loading")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("resultCard")
+        .classList.add("hidden");
+
+
+    try {
+
+        const response = await fetch(
+            "/generate",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    time: time,
+                    place: place,
+                    mood: mood
+                })
+            }
+        );
+
+
+        const data = await response.json();
+
+
+        if (data.error) {
+
+            document
+                .getElementById("result")
+                .textContent = data.error;
+
+        } else {
+
+            document
+                .getElementById("result")
+                .textContent = data.result;
+
+        }
+
+
+        document
+            .getElementById("resultCard")
+            .classList.remove("hidden");
+
+    }
+
+
+    catch (error) {
+
+        document
+            .getElementById("result")
+            .textContent =
+            "Something went wrong. Please make sure Ollama is running.";
+
+        document
+            .getElementById("resultCard")
+            .classList.remove("hidden");
+
+    }
+
+
+    document
+        .getElementById("loading")
+        .classList.add("hidden");
+}
+
+</script>
+
+</body>
+</html>
